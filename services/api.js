@@ -89,29 +89,16 @@ export const authAPI = {
     try {
       log('Login attempt:', { username });
       
-      // For testing - create a direct URL to test connectivity
-      const testUrl = `${API_URL}/api/login.php`;
-      log('Testing connectivity to:', testUrl);
-      
-      // Create form data
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('password', password);
-      
-      // Log form data for debugging
-      log('Form data:', {
-        username,
-        password: '********' // Don't log actual password
-      });
-      
+      // For Vercel, we need to send JSON instead of FormData
       const response = await fetchWithTimeout(
-        testUrl,
+        `${API_URL}/api/login`,
         {
           method: 'POST',
-          body: formData,
           headers: {
+            'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
+          body: JSON.stringify({ username, password }),
         }
       );
       
@@ -126,28 +113,21 @@ export const authAPI = {
     try {
       log('Register attempt:', { username, email });
       
-      // Create form data
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('email', email);
-      formData.append('password', password);
-      formData.append('confirm_password', password);
-      
-      // Log form data for debugging
-      log('Form data:', {
-        username,
-        email,
-        password: '********' // Don't log actual password
-      });
-      
+      // For Vercel, we need to send JSON instead of FormData
       const response = await fetchWithTimeout(
-        `${API_URL}/api/register.php`,
+        `${API_URL}/api/register`,
         {
           method: 'POST',
-          body: formData,
           headers: {
+            'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
+          body: JSON.stringify({ 
+            username, 
+            email, 
+            password,
+            confirm_password: password 
+          }),
         }
       );
       
@@ -204,14 +184,14 @@ export const mockAuthAPI = {
   }
 };
 
-// Export the mock API for testing
+// Export the test API for testing
 export const testAPI = {
   testConnection: async () => {
     try {
       log('Testing connection to server...');
       
       const response = await fetchWithTimeout(
-        `${API_URL}/api/test.php`,
+        `${API_URL}/api/test`,
         {
           method: 'GET',
           headers: {
